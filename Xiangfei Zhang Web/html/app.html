@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1024 Web Game</title>
+    <style>
+        body {
+            background-color: #faf8ef;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 50px;
+        }
+
+        h1 {
+            color: #776e65;
+            font-size: 48px;
+            margin: 0;
+        }
+
+        .score-container {
+            font-size: 24px;
+            font-weight: bold;
+            color: #776e65;
+            margin-bottom: 20px;
+        }
+
+        .grid {
+            display: flex;
+            flex-wrap: wrap;
+            width: 400px;
+            height: 400px;
+            background-color: #bbada0;
+            border-radius: 10px;
+            padding: 10px;
+            gap: 10px;
+        }
+
+        .cell {
+            width: 87px;
+            height: 87px;
+            background-color: #cdc1b4;
+            border-radius: 5px;
+            font-size: 35px;
+            font-weight: bold;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #776e65;
+        }
+
+        .back-link {
+            margin-top: 30px;
+            padding: 10px 20px;
+            background-color: #8f7a66;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        .back-link:hover {
+            background-color: #9f8b77;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>1024</h1>
+    <div class="score-container">Score: <span id="score">0</span></div>
+    
+    <div class="grid" id="grid"></div>
+
+    <a href="1.html" class="back-link">Return to My Interest Page</a>
+
+    <script>
+        const gridDisplay = document.getElementById('grid');
+        const scoreDisplay = document.getElementById('score');
+        let squares = [];
+        let score = 0;
+
+        function createBoard() {
+            for (let i = 0; i < 16; i++) {
+                let square = document.createElement('div');
+                square.innerHTML = 0;
+                square.classList.add('cell');
+                gridDisplay.appendChild(square);
+                squares.push(square);
+            }
+            generate();
+            generate();
+            updateColors();
+        }
+
+        function generate() {
+            let randomNumber = Math.floor(Math.random() * squares.length);
+            if (squares[randomNumber].innerHTML == 0) {
+                squares[randomNumber].innerHTML = 2;
+            } else {
+                generate();
+            }
+        }
+
+        function updateColors() {
+            for (let i = 0; i < 16; i++) {
+                let val = parseInt(squares[i].innerHTML);
+                if (val === 0) {
+                    squares[i].style.backgroundColor = '#cdc1b4';
+                    squares[i].style.color = '#cdc1b4';
+                } else {
+                    squares[i].style.color = val > 4 ? '#f9f6f2' : '#776e65';
+                    if (val === 2) squares[i].style.backgroundColor = '#eee4da';
+                    else if (val === 4) squares[i].style.backgroundColor = '#ede0c8';
+                    else if (val === 8) squares[i].style.backgroundColor = '#f2b179';
+                    else if (val === 16) squares[i].style.backgroundColor = '#f59563';
+                    else if (val === 32) squares[i].style.backgroundColor = '#f67c5f';
+                    else if (val === 64) squares[i].style.backgroundColor = '#f65e3b';
+                    else if (val === 128) squares[i].style.backgroundColor = '#edcf72';
+                    else if (val === 256) squares[i].style.backgroundColor = '#edcc61';
+                    else if (val === 512) squares[i].style.backgroundColor = '#edc850';
+                    else if (val === 1024) squares[i].style.backgroundColor = '#edc53f';
+                    else squares[i].style.backgroundColor = '#edc22e';
+                }
+            }
+        }
+
+        function moveRight() {
+            for (let i = 0; i < 16; i++) {
+                if (i % 4 === 0) {
+                    let totalOne = squares[i].innerHTML;
+                    let totalTwo = squares[i+1].innerHTML;
+                    let totalThree = squares[i+2].innerHTML;
+                    let totalFour = squares[i+3].innerHTML;
+                    let row = [parseInt(totalOne), parseInt(totalTwo), parseInt(totalThree), parseInt(totalFour)];
+                    
+                    let filteredRow = row.filter(num => num);
+                    let missing = 4 - filteredRow.length;
+                    let zeros = Array(missing).fill(0);
+                    let newRow = zeros.concat(filteredRow);
+
+                    squares[i].innerHTML = newRow[0];
+                    squares[i+1].innerHTML = newRow[1];
+                    squares[i+2].innerHTML = newRow[2];
+                    squares[i+3].innerHTML = newRow[3];
+                }
+            }
+        }
+
+        function moveLeft() {
+            for (let i = 0; i < 16; i++) {
+                if (i % 4 === 0) {
+                    let totalOne = squares[i].innerHTML;
+                    let totalTwo = squares[i+1].innerHTML;
+                    let totalThree = squares[i+2].innerHTML;
+                    let totalFour = squares[i+3].innerHTML;
+                    let row = [parseInt(totalOne), parseInt(totalTwo), parseInt(totalThree), parseInt(totalFour)];
+                    
+                    let filteredRow = row.filter(num => num);
+                    let missing = 4 - filteredRow.length;
+                    let zeros = Array(missing).fill(0);
+                    let newRow = filteredRow.concat(zeros);
+
+                    squares[i].innerHTML = newRow[0];
+                    squares[i+1].innerHTML = newRow[1];
+                    squares[i+2].innerHTML = newRow[2];
+                    squares[i+3].innerHTML = newRow[3];
+                }
+            }
+        }
+
+        function moveDown() {
+            for (let i = 0; i < 4; i++) {
+                let totalOne = squares[i].innerHTML;
+                let totalTwo = squares[i+4].innerHTML;
+                let totalThree = squares[i+8].innerHTML;
+                let totalFour = squares[i+12].innerHTML;
+                let column = [parseInt(totalOne), parseInt(totalTwo), parseInt(totalThree), parseInt(totalFour)];
+                
+                let filteredColumn = column.filter(num => num);
+                let missing = 4 - filteredColumn.length;
+                let zeros = Array(missing).fill(0);
+                let newColumn = zeros.concat(filteredColumn);
+
+                squares[i].innerHTML = newColumn[0];
+                squares[i+4].innerHTML = newColumn[1];
+                squares[i+8].innerHTML = newColumn[2];
+                squares[i+12].innerHTML = newColumn[3];
+            }
+        }
+
+        function moveUp() {
+            for (let i = 0; i < 4; i++) {
+                let totalOne = squares[i].innerHTML;
+                let totalTwo = squares[i+4].innerHTML;
+                let totalThree = squares[i+8].innerHTML;
+                let totalFour = squares[i+12].innerHTML;
+                let column = [parseInt(totalOne), parseInt(totalTwo), parseInt(totalThree), parseInt(totalFour)];
+                
+                let filteredColumn = column.filter(num => num);
+                let missing = 4 - filteredColumn.length;
+                let zeros = Array(missing).fill(0);
+                let newColumn = filteredColumn.concat(zeros);
+
+                squares[i].innerHTML = newColumn[0];
+                squares[i+4].innerHTML = newColumn[1];
+                squares[i+8].innerHTML = newColumn[2];
+                squares[i+12].innerHTML = newColumn[3];
+            }
+        }
+
+        function combineRow() {
+            for (let i = 0; i < 15; i++) {
+                if (squares[i].innerHTML === squares[i+1].innerHTML && i % 4 !== 3) {
+                    let combinedTotal = parseInt(squares[i].innerHTML) + parseInt(squares[i+1].innerHTML);
+                    squares[i].innerHTML = combinedTotal;
+                    squares[i+1].innerHTML = 0;
+                    score += combinedTotal;
+                    scoreDisplay.innerHTML = score;
+                }
+            }
+        }
+
+        function combineColumn() {
+            for (let i = 0; i < 12; i++) {
+                if (squares[i].innerHTML === squares[i+4].innerHTML) {
+                    let combinedTotal = parseInt(squares[i].innerHTML) + parseInt(squares[i+4].innerHTML);
+                    squares[i].innerHTML = combinedTotal;
+                    squares[i+4].innerHTML = 0;
+                    score += combinedTotal;
+                    scoreDisplay.innerHTML = score;
+                }
+            }
+        }
+
+        function control(e) {
+            if(e.keyCode === 39) {
+                keyRight();
+            } else if (e.keyCode === 37) {
+                keyLeft();
+            } else if (e.keyCode === 38) {
+                keyUp();
+            } else if (e.keyCode === 40) {
+                keyDown();
+            }
+        }
+        document.addEventListener('keyup', control);
+
+        function keyRight() {
+            moveRight();
+            combineRow();
+            moveRight();
+            generate();
+            updateColors();
+        }
+
+        function keyLeft() {
+            moveLeft();
+            combineRow();
+            moveLeft();
+            generate();
+            updateColors();
+        }
+
+        function keyUp() {
+            moveUp();
+            combineColumn();
+            moveUp();
+            generate();
+            updateColors();
+        }
+
+        function keyDown() {
+            moveDown();
+            combineColumn();
+            moveDown();
+            generate();
+            updateColors();
+        }
+
+        createBoard();
+    </script>
+</body>
+</html>
